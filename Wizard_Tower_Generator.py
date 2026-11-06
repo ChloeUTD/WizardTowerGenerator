@@ -2,17 +2,21 @@ from maya import cmds
 # import sys
 
 # Make wizard tower class with 5 parameters.
+# Add a warning saying you can't make subdivison axis/ brick rows lower than 3
 
 
 class WizardTower():
 
     # Current order:
     # 1. Create base, 2. Apply materials, 3. clean up and merge
-    def __init__(self, height=6, radius=1, windows=False,
-                 roofcolor=[0, 0, 0], subspires=False):
+    def __init__(self, height=6, radius=1, hasbricks=False, brickrows=3,
+                 brickcol=1, roofcolor=[0, 0, 0], subspires=False):
         # Mesh parameter variables
         self.cylinder_height = height
         self.cylinder_radius = radius
+        self.has_bricks = hasbricks
+        self.brick_rows = brickrows
+        self.brick_col = brickcol
         # Color parameter variable
         self.roof_color = roofcolor
         # Non parameter variables
@@ -25,9 +29,10 @@ class WizardTower():
         """This will run the other functions required to make the tower"""
         self.create_base()
         # Put roof color and wall color here
-        self.create_roof_mat()
-        self.create_tower_mat()
-        self.clean_and_merge()
+        # self.create_roof_mat()
+        # self.create_tower_mat()
+        self.create_bricks()  # Put create bricks here
+        # self.clean_and_merge()
 
     def create_base(self):
 
@@ -64,6 +69,7 @@ class WizardTower():
         # Run edit names to see if WizardTower is taken. If not, add
         # a variable that you get from what edit_names returns
         cmds.polyUnite("TowerBase", "TowerRoof", n="WizardTower")
+        # Delete empty group Towerbase and TowerRoof
 
     def edit_names(self):
         """This will run if an instance of WizardTower already exists so the
@@ -102,10 +108,34 @@ class WizardTower():
         cmds.select('TowerBase')
         cmds.hyperShade(a=shader)
 
-    def create_window_mat(self):
+    def create_bricks(self):
+        """Create wall bricks based on brick row and brick collumn
+        parameters"""
+        # Mess with collumn numbers and make extrude thickness a little
+        # random
+        extrude_thickness = 0.05
+        mortar_gap = 0.02
+        # Divide mesh.
+        cmds.setAttr("polyCylinder1.subdivisionsAxis", self.brick_rows)
+        cmds.setAttr("polyCylinder1.subdivisionsHeight", self.brick_col)
+        cmds.setAttr("polyCylinder1.subdivisionsCaps", 0)
+        # Count bricks
+        count = 0
+        faces_to_extrude = []
+        for row in range(self.brick_rows):
 
-        # This will make the lambert for the windows. It is not editable
-        pass
+            for col in range(self.brick_col):
+                face_index = (row * self.brick_col) + col
+                # Adds each face to the list to be extruded
+                faces_to_extrude.append(f"TowerBaseShape.f[{face_index}]")
+                # Extrude Faces
+                cmds.polyExtrudeFacet(faces_to_extrude[count], ch=1, kft=0,
+                                      ls=(1.0 - mortar_gap, 1.0 - mortar_gap,
+                                      1.0), ltz=extrude_thickness)
+                count += 1
+
+        cmds.select(clear=True)
+
 
 # newtest = WizardTower(roofcolor=[1, 0, 0])
 # Example of how to set parameters in maya editor
