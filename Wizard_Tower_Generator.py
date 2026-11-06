@@ -13,13 +13,19 @@ class WizardTower():
         # Mesh parameter variables
         self.cylinder_height = height
         self.cylinder_radius = radius
+        # Color parameter variable
+        self.roof_color = roofcolor
         # Non parameter variables
         self.roof_height = self.cylinder_height / 2
         self.roof_radius = self.cylinder_radius * 2
+        # Color non parameter variable
+        self.wall_color = [0.463, 0.49, 0.522]
 
     def create(self):
         """This will run the other functions required to make the tower"""
         self.create_base()
+        # Put roof color and wall color here
+        self.create_roof_mat()
         self.clean_and_merge()
 
     def create_base(self):
@@ -54,26 +60,34 @@ class WizardTower():
                           scale=1)
         cmds.makeIdentity("TowerRoof", apply=1, translate=1, rotate=1,
                           scale=1)
+        # Run edit names to see if WizardTower is taken. If not, add
+        # a variable that you get from what edit_names returns
         cmds.polyUnite("TowerBase", "TowerRoof", n="WizardTower")
 
     def edit_names(self):
         """This will run if an instance of WizardTower already exists so the
         code doesn't rely on one hard coded name"""
         # Plan: Check and see if there is an object named whatever the wizard
-        # tower will be named after the objects are merged.
+        # tower will be named after the objects are merged. Also maybe
+        # create a self. variable so it can be referenced throughout the
+        # class
         pass
 
-    def create_roof_mat(self, material_name="TestMat"):
+    def create_roof_mat(self):
 
-        # This will create a lambert shader for the roof. It takes input
+        # This will create a shader for the roof. It takes input
         # from the roofcolor parameter
         # cmds.color("pCube1", rgb=(1, 0, 0))
-        testing = cmds.shadingNode('aiStandardSurface', asShader=1, name='Whatever')
+        shader = cmds.shadingNode('aiStandardSurface', asShader=1,
+                                  name='roofMat')
         # Color assign, rgb values are from 0-1
-        rgb = [0, 1, 0]  # change to user input
-        cmds.setAttr((testing + '.baseColor'), rgb[0], rgb[1], rgb[2], type='double3')
-        cmds.select('pCubeShape1')
-        cmds.hyperShade(a=testing)
+        rgb = []
+        for value in self.roof_color:
+            rgb.append(value)
+        cmds.setAttr((shader + '.baseColor'), rgb[0], rgb[1], rgb[2],
+                     type='double3')
+        cmds.select('TowerRoof')
+        cmds.hyperShade(a=shader)
 
     def create_tower_mat(self):
 
@@ -86,5 +100,5 @@ class WizardTower():
         # This will make the lambert for the windows. It is not editable
         pass
 
-# newtest = WizardTower(1,1,False,[1,3,4],True)
+# newtest = WizardTower(roofcolor=[1, 0, 0])
 # Example of how to set parameters in maya editor
