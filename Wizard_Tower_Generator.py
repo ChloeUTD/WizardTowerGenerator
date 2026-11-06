@@ -26,6 +26,7 @@ class WizardTower():
         self.create_base()
         # Put roof color and wall color here
         self.create_roof_mat()
+        self.create_tower_mat()
         self.clean_and_merge()
 
     def create_base(self):
@@ -91,9 +92,15 @@ class WizardTower():
 
     def create_tower_mat(self):
 
-        # This will make the lambert for the tower walls. It is not
+        # This will make the shader for the tower walls. It is not
         # editable
-        pass
+        shader = cmds.shadingNode('aiStandardSurface', asShader=1,
+                                  name='wallMat')
+        #
+        cmds.setAttr((shader + '.baseColor'), self.wall_color[0],
+                     self.wall_color[1], self.wall_color[2], type='double3')
+        cmds.select('TowerBase')
+        cmds.hyperShade(a=shader)
 
     def create_window_mat(self):
 
