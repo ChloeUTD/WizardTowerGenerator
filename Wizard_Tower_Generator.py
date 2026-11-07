@@ -1,5 +1,6 @@
 from maya import cmds
 # import sys
+import random
 
 # Make wizard tower class with 5 parameters.
 # Add a warning saying you can't make subdivison axis/ brick rows lower than 3
@@ -9,12 +10,11 @@ class WizardTower():
 
     # Current order:
     # 1. Create base, 2. Apply materials, 3. clean up and merge
-    def __init__(self, height=6, radius=1, hasbricks=False, brickrows=3,
-                 brickcol=1, roofcolor=[0, 0, 0], subspires=False):
+    def __init__(self, height=6, radius=1, brickrows=3,
+                 brickcol=1, roofcolor=[0, 0, 0]):
         # Mesh parameter variables
         self.cylinder_height = height
         self.cylinder_radius = radius
-        self.has_bricks = hasbricks
         self.brick_rows = brickrows
         self.brick_col = brickcol
         # Color parameter variable
@@ -32,7 +32,7 @@ class WizardTower():
         # self.create_roof_mat()
         # self.create_tower_mat()
         self.create_bricks()  # Put create bricks here
-        # self.clean_and_merge()
+        self.clean_and_merge()
 
     def create_base(self):
 
@@ -113,8 +113,6 @@ class WizardTower():
         parameters"""
         # Mess with collumn numbers and make extrude thickness a little
         # random
-        extrude_thickness = 0.05
-        mortar_gap = 0.02
         # Divide mesh.
         cmds.setAttr("polyCylinder1.subdivisionsAxis", self.brick_rows)
         cmds.setAttr("polyCylinder1.subdivisionsHeight", self.brick_col)
@@ -126,6 +124,8 @@ class WizardTower():
 
             for col in range(self.brick_col):
                 face_index = (row * self.brick_col) + col
+                extrude_thickness = random.uniform(0.01, 0.05)
+                mortar_gap = random.uniform(0.04, 0.07)
                 # Adds each face to the list to be extruded
                 faces_to_extrude.append(f"TowerBaseShape.f[{face_index}]")
                 # Extrude Faces
