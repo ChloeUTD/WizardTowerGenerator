@@ -11,6 +11,7 @@ def get_maya_main_win():
 
 
 class WizardWin(QtWidgets.QDialog):
+    # TODO: Make it to where pressing the create button creates a Wizard Tower
 
     def __init__(self):
         """Construction"""
@@ -22,6 +23,11 @@ class WizardWin(QtWidgets.QDialog):
         self._set_input_guidelines()
         self._layout_ui()
         self._apply_layout()
+
+    def _connect_signals(self):
+        """Link buttons to functions"""
+        
+        pass
 
     def _define_widgets(self):
         """Define all the UI elements and widgets"""
@@ -36,10 +42,10 @@ class WizardWin(QtWidgets.QDialog):
         self.brickrow_label = QtWidgets.QLabel("Brick Rows:")
         self.brickcol_label = QtWidgets.QLabel("Brick Col:")
         # Editable values
-        self.height_edit = QtWidgets.QLineEdit()
-        self.radius_edit = QtWidgets.QLineEdit()
-        self.brickrow_edit = QtWidgets.QLineEdit()
-        self.brickcol_edit = QtWidgets.QLineEdit()
+        self.height_edit = QtWidgets.QLineEdit("00.00")
+        self.radius_edit = QtWidgets.QLineEdit("00.00")
+        self.brickrow_edit = QtWidgets.QLineEdit("00.00")
+        self.brickcol_edit = QtWidgets.QLineEdit("00.00")
         # Create Button
         self.create_btn = QtWidgets.QPushButton("Create!")
 
@@ -50,6 +56,10 @@ class WizardWin(QtWidgets.QDialog):
         self.radius_edit.setInputMask("99.99")
         self.brickrow_edit.setInputMask("99.99")
         self.brickcol_edit.setInputMask("99.99")
+
+    def _handle_input(self):
+        """Control input for the lineEdit variables"""
+        pass
 
     def _layout_ui(self):
         """Layout UI elements and widgets"""
