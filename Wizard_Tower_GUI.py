@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui, QtCore
 from maya import OpenMayaUI as omui
 from shiboken6 import wrapInstance
 # from Wizard_Tower_Generator import WizardTower
@@ -65,3 +65,21 @@ class WizardWin(QtWidgets.QDialog):
         # Create Button
         self.main_layout.addWidget(self.create_btn)
         self.setLayout(self.main_layout)
+
+    def _define_color_elements(self):
+        """Define components exclusive to color box"""
+        # Box
+        self.preview_box = QtWidgets.QLabel()
+        self.preview_box.setFixedSize(100, 100)
+        self.preview_box.setAutoFillBackground(True)
+        # Sliders
+        self.r_slider = self._create_color_slider()
+        self.g_slider = self._create_color_slider()
+        self.b_slider = self._create_color_slider()
+        # Labels, shows current 0-1 values
+
+    def _create_color_sider(self):
+        """Create matching horizontal sliders"""
+        slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
+        slider.setRange(0, 100)
+        slider.setValue(50)  # Defaults to midpoint
