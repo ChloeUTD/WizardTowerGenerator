@@ -18,8 +18,10 @@ class WizardWin(QtWidgets.QDialog):
         self.setWindowTitle("Summon the spire!")
         self.resize(500, 500)
         self._define_widgets()
+        self._define_color_elements()
         self._set_input_guidelines()
         self._layout_ui()
+        self._apply_layout()
 
     def _define_widgets(self):
         """Define all the UI elements and widgets"""
@@ -69,6 +71,27 @@ class WizardWin(QtWidgets.QDialog):
         self.main_layout.addWidget(self.create_btn)
         # Layout application
         self.setLayout(self.main_layout)
+
+    def _apply_layout(self):
+        """Apply and organize layout"""
+        # Add rows to form layout
+        self.form_layout.addRow("Red:", self._create_row_layout(self.r_slider,
+                                self.r_val_label))
+        self.form_layout.addRow("Green:", self._create_row_layout(
+                                self.g_slider, self.g_val_label))
+        self.form_layout.addRow("Blue:", self._create_row_layout(self.b_slider,
+                                self.b_val_label))
+        # Make form_layout child of controls_layout
+        self.controls_layout.addLayout(self.form_layout)
+        # Controls on left, preview on right
+        self.main_layout.addLayout(self.controls_layout)
+        self.main_layout.addWidget(self.preview_box,
+        alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
+        # Connect signals so update triggers when sliders move
+        self.r_slider.valueChanged.connect(self.update_color)
+        self.g_slider.valueChanged.connect(self.update_color)
+        self.b_slider.valueChanged.connect(self.update_color)
+        self.update_color()
 
     def _define_color_elements(self):
         """Define components exclusive to color box"""
