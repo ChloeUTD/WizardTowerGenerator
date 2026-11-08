@@ -67,6 +67,7 @@ class WizardWin(QtWidgets.QDialog):
         self.main_layout.addWidget(self.brickcol_edit)
         # Create Button
         self.main_layout.addWidget(self.create_btn)
+        # Layout application
         self.setLayout(self.main_layout)
 
     def _define_color_elements(self):
@@ -99,3 +100,18 @@ class WizardWin(QtWidgets.QDialog):
         label.setFixedWidth(35)
         return row
 
+    def _update_color(self):
+        """Updates the color and text of label"""
+        # Sliders
+        r = self.r_slider.value() / 100.0
+        g = self.g_slider.value() / 100.0
+        b = self.b_slider.value() / 100.0
+        # Text
+        self.r_val_label.setText(f"{r:.2f}")
+        self.g_val_label.setText(f"{g:.2f}")
+        self.b_val_label.setText(f"{b:.2f}")
+        # Apply color to preview window
+        color = QtGui.QColor.fromRgbF(r, g, b)
+        palette = self.preview_box.palette()
+        palette.setColor(QtGui.QPalette.ColorRole.Window, color)
+        self.preview_box.setPalette(palette)
