@@ -88,10 +88,10 @@ class WizardWin(QtWidgets.QDialog):
         self.main_layout.addWidget(self.preview_box,
         alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
         # Connect signals so update triggers when sliders move
-        self.r_slider.valueChanged.connect(self.update_color)
-        self.g_slider.valueChanged.connect(self.update_color)
-        self.b_slider.valueChanged.connect(self.update_color)
-        self.update_color()
+        self.r_slider.valueChanged.connect(self._update_color)
+        self.g_slider.valueChanged.connect(self._update_color)
+        self.b_slider.valueChanged.connect(self._update_color)
+        self._update_color()
 
     def _define_color_elements(self):
         """Define components exclusive to color box"""
@@ -108,7 +108,7 @@ class WizardWin(QtWidgets.QDialog):
         self.g_val_label = QtWidgets.QLabel("0.50")
         self.b_val_label = QtWidgets.QLabel("0.50")
 
-    def _create_color_sider(self):
+    def _create_color_slider(self):
         """Create matching horizontal sliders"""
         slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         slider.setRange(0, 100)
