@@ -1,7 +1,7 @@
 from PySide6 import QtWidgets, QtGui, QtCore
 from maya import OpenMayaUI as omui
 from shiboken6 import wrapInstance
-# from Wizard_Tower_Generator import WizardTower
+from Wizard_Tower_Generator import WizardTower
 
 
 def get_maya_main_win():
@@ -23,11 +23,16 @@ class WizardWin(QtWidgets.QDialog):
         self._set_input_guidelines()
         self._layout_ui()
         self._apply_layout()
+        self._connect_signals()
 
     def _connect_signals(self):
         """Link buttons to functions"""
-        
-        pass
+        self.height_edit.editingFinished.connect(self._set_input_guidelines)
+        self.radius_edit.editingFinished.connect(self._set_input_guidelines)
+        self.brickrow_edit.editingFinished.connect(self._set_input_guidelines)
+        self.brickcol_edit.editingFinished.connect(self._set_input_guidelines)
+        # Link create button to create tower function
+        self.create_btn.clicked.connect(self._create_tower)
 
     def _define_widgets(self):
         """Define all the UI elements and widgets"""
@@ -42,24 +47,29 @@ class WizardWin(QtWidgets.QDialog):
         self.brickrow_label = QtWidgets.QLabel("Brick Rows:")
         self.brickcol_label = QtWidgets.QLabel("Brick Col:")
         # Editable values
-        self.height_edit = QtWidgets.QLineEdit("00.00")
-        self.radius_edit = QtWidgets.QLineEdit("00.00")
-        self.brickrow_edit = QtWidgets.QLineEdit("00.00")
-        self.brickcol_edit = QtWidgets.QLineEdit("00.00")
+        self.height_edit = QtWidgets.QLineEdit("6")
+        self.radius_edit = QtWidgets.QLineEdit("2")
+        self.brickrow_edit = QtWidgets.QLineEdit("20")
+        self.brickcol_edit = QtWidgets.QLineEdit("10")
         # Create Button
         self.create_btn = QtWidgets.QPushButton("Create!")
 
     def _set_input_guidelines(self):
         """Ensure only compatible values are able to be entered"""
         # Input Masks
-        self.height_edit.setInputMask("99.99")
-        self.radius_edit.setInputMask("99.99")
-        self.brickrow_edit.setInputMask("99.99")
-        self.brickcol_edit.setInputMask("99.99")
+        self.height_edit.setInputMask("9")
+        self.radius_edit.setInputMask("9")
+        self.brickrow_edit.setInputMask("99")
+        self.brickcol_edit.setInputMask("99")
 
     def _handle_input(self):
         """Control input for the lineEdit variables"""
-        pass
+        # Convert user input to float
+        self.height_input = float(self.height_edit.text())
+        self.radius_input = float(self.radius_edit.text())
+        self.brickrow_input = int(self.brickrow_edit.text())
+        self.brickcol_input = int(self.brickcol_edit.text())
+        # Call these later in the create button function
 
     def _layout_ui(self):
         """Layout UI elements and widgets"""
@@ -72,6 +82,7 @@ class WizardWin(QtWidgets.QDialog):
         self.main_layout.addWidget(self.radius_label)
         self.main_layout.addWidget(self.brickrow_label)
         self.main_layout.addWidget(self.brickcol_label)
+        self._handle_input()
         # Editable Values
         self.main_layout.addWidget(self.height_edit)
         self.main_layout.addWidget(self.radius_edit)
@@ -135,16 +146,26 @@ class WizardWin(QtWidgets.QDialog):
 
     def _update_color(self):
         """Updates the color and text of label"""
-        # Sliders
-        r = self.r_slider.value() / 100.0
-        g = self.g_slider.value() / 100.0
-        b = self.b_slider.value() / 100.0
+        # Sliders, call in create button function
+        self.r = self.r_slider.value() / 100.0
+        self.g = self.g_slider.value() / 100.0
+        self.b = self.b_slider.value() / 100.0
         # Text
-        self.r_val_label.setText(f"{r:.2f}")
-        self.g_val_label.setText(f"{g:.2f}")
-        self.b_val_label.setText(f"{b:.2f}")
+        self.r_val_label.setText(f"{self.r:.2f}")
+        self.g_val_label.setText(f"{self.g:.2f}")
+        self.b_val_label.setText(f"{self.b:.2f}")
         # Apply color to preview window
-        color = QtGui.QColor.fromRgbF(r, g, b)
+        color = QtGui.QColor.fromRgbF(self.r, self.g, self.b)
         palette = self.preview_box.palette()
         palette.setColor(QtGui.QPalette.ColorRole.Window, color)
         self.preview_box.setPalette(palette)
+
+    def _create_tower(self):
+        """Creates Wizard Tower when create button is pressed"""
+        new_tower = WizardTower(height=self.height_input,
+                                radius=self.radius_input,
+                                brickrows=self.brickrow_input,
+                                brickcol=self.brickcol_input, roofcolor=[
+                                    self.r, self.g, self.b])
+        new_tower.create()
+        print("Create Pressed")
