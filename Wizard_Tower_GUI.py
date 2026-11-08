@@ -51,8 +51,11 @@ class WizardWin(QtWidgets.QDialog):
 
     def _layout_ui(self):
         """Layout UI elements and widgets"""
-        # Labels
+        # Layouts
         self.main_layout = QtWidgets.QVBoxLayout()
+        self.controls_layout = QtWidgets.QVBoxLayout()
+        self.form_layout = QtWidgets.QFormLayout()
+        # Labels
         self.main_layout.addWidget(self.height_label)
         self.main_layout.addWidget(self.radius_label)
         self.main_layout.addWidget(self.brickrow_label)
@@ -77,9 +80,22 @@ class WizardWin(QtWidgets.QDialog):
         self.g_slider = self._create_color_slider()
         self.b_slider = self._create_color_slider()
         # Labels, shows current 0-1 values
+        self.r_val_label = QtWidgets.QLabel("0.50")
+        self.g_val_label = QtWidgets.QLabel("0.50")
+        self.b_val_label = QtWidgets.QLabel("0.50")
 
     def _create_color_sider(self):
         """Create matching horizontal sliders"""
         slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         slider.setRange(0, 100)
         slider.setValue(50)  # Defaults to midpoint
+        return slider
+
+    def _create_row_layout(self, slider, label):
+        """Aligns slider next to its value text"""
+        row = QtWidgets.QHBoxLayout()
+        row.addWidget(slider)
+        row.addWidget(label)
+        label.setFixedWidth(35)
+        return row
+
