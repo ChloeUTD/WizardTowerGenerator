@@ -25,7 +25,8 @@ class WizardWin(QtWidgets.QDialog):
         self._define_color_elements()
         self._set_input_guidelines()
         self._layout_ui()
-        self._apply_layout()
+        self._apply_layout_param()
+        self._apply_layout_color()
         self._connect_signals()
 
     def _connect_signals(self):
@@ -41,18 +42,6 @@ class WizardWin(QtWidgets.QDialog):
 
     def _define_widgets(self):
         """Define all the UI elements and widgets"""
-        # Create 4 widgets, height, radius, brickrows, brickcollumns
-        # All are simple with a label and box to input a number. Use inputMask
-        # on QLineEdit with mask character set to 9 to require character of
-        # number category. Also add a create button that will create the tower
-        # when finished.
-        # Labels
-        self.height_label = QtWidgets.QLabel("Height:")
-        self.radius_label = QtWidgets.QLabel("Radius:")
-        self.brickrow_label = QtWidgets.QLabel("Brick Rows:")
-        self.brickcol_label = QtWidgets.QLabel("Brick Col:")
-        self.roof_height_label = QtWidgets.QLabel("Roof Height:")
-        self.roof_radius_label = QtWidgets.QLabel("Roof Radius:")
         # Editable values
         self.height_edit = QtWidgets.QLineEdit("6")
         self.radius_edit = QtWidgets.QLineEdit("2")
@@ -88,38 +77,47 @@ class WizardWin(QtWidgets.QDialog):
         # Layouts
         self.main_layout = QtWidgets.QVBoxLayout()
         self.controls_layout = QtWidgets.QVBoxLayout()
-        self.form_layout = QtWidgets.QFormLayout()
-        # Labels
-        self.main_layout.addWidget(self.height_label)
-        self.main_layout.addWidget(self.radius_label)
-        self.main_layout.addWidget(self.brickrow_label)
-        self.main_layout.addWidget(self.brickcol_label)
-        self.main_layout.addWidget(self.roof_height_label)
-        self.main_layout.addWidget(self.roof_radius_label)
+        self.form_layout_color = QtWidgets.QFormLayout()
+        self.form_layout_param = QtWidgets.QFormLayout()
         self._handle_input()
-        # Editable Values
-        self.main_layout.addWidget(self.height_edit)
-        self.main_layout.addWidget(self.radius_edit)
-        self.main_layout.addWidget(self.brickrow_edit)
-        self.main_layout.addWidget(self.brickcol_edit)
-        self.main_layout.addWidget(self.roof_height_edit)
-        self.main_layout.addWidget(self.roof_radius_edit)
         # Create Button
         self.main_layout.addWidget(self.create_btn)
         # Layout application
         self.setLayout(self.main_layout)
 
-    def _apply_layout(self):
-        """Apply and organize layout"""
-        # Add rows to form layout
-        self.form_layout.addRow("Red:", self._create_row_layout(self.r_slider,
-                                self.r_val_label))
-        self.form_layout.addRow("Green:", self._create_row_layout(
+    def _apply_layout_param(self):
+        """Apply and organize layout for parameters"""
+        # Add rows to form layout param
+        self.form_layout_param.addRow("Height:", self._create_row_layout_param(
+                                      self.height_edit))
+        self.form_layout_param.addRow("Radius:", self._create_row_layout_param(
+                                      self.radius_edit))
+        self.form_layout_param.addRow("Brick Rows:",
+                                      self._create_row_layout_param(
+                                       self.brickrow_edit))
+        self.form_layout_param.addRow("Brick Collumns:",
+                                      self._create_row_layout_param(
+                                       self.brickcol_edit))
+        self.form_layout_param.addRow("Roof Height:",
+                                      self._create_row_layout_param(
+                                       self.roof_height_edit))
+        self.form_layout_param.addRow("Roof Radius:",
+                                      self._create_row_layout_param(
+                                       self.roof_radius_edit))
+        # Make form_layout_param child of main_layout
+        self.main_layout.addLayout(self.form_layout_param)
+
+    def _apply_layout_color(self):
+        """Apply and organize layout for colors"""
+        # Add rows to form layout color
+        self.form_layout_color.addRow("Red:", self._create_row_layout
+                                      (self.r_slider, self.r_val_label))
+        self.form_layout_color.addRow("Green:", self._create_row_layout(
                                 self.g_slider, self.g_val_label))
-        self.form_layout.addRow("Blue:", self._create_row_layout(self.b_slider,
-                                self.b_val_label))
-        # Make form_layout child of controls_layout
-        self.controls_layout.addLayout(self.form_layout)
+        self.form_layout_color.addRow("Blue:", self._create_row_layout(
+                                      self.b_slider, self.b_val_label))
+        # Make form_layout_color child of controls_layout
+        self.controls_layout.addLayout(self.form_layout_color)
         # Controls on left, preview on right
         self.main_layout.addLayout(self.controls_layout)
         self.main_layout.addWidget(self.preview_box,
@@ -152,12 +150,18 @@ class WizardWin(QtWidgets.QDialog):
         slider.setValue(50)  # Defaults to midpoint
         return slider
 
-    def _create_row_layout(self, slider, label):
+    def _create_row_layout(self, field, label):
         """Aligns slider next to its value text"""
         row = QtWidgets.QHBoxLayout()
-        row.addWidget(slider)
+        row.addWidget(field)
         row.addWidget(label)
         label.setFixedWidth(35)
+        return row
+
+    def _create_row_layout_param(self, field):
+        """Create row layout for editable parameters"""
+        row = QtWidgets.QHBoxLayout()
+        row.addWidget(field)
         return row
 
     def _update_color(self):
