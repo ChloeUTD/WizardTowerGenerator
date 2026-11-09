@@ -34,6 +34,8 @@ class WizardWin(QtWidgets.QDialog):
         self.radius_edit.editingFinished.connect(self._handle_input)
         self.brickrow_edit.editingFinished.connect(self._handle_input)
         self.brickcol_edit.editingFinished.connect(self._handle_input)
+        self.roof_height_edit.editingFinished.connect(self._handle_input)
+        self.roof_radius_edit.editingFinished.connect(self._handle_input)
         # Link create button to create tower function
         self.create_btn.clicked.connect(self._create_tower)
 
@@ -49,21 +51,27 @@ class WizardWin(QtWidgets.QDialog):
         self.radius_label = QtWidgets.QLabel("Radius:")
         self.brickrow_label = QtWidgets.QLabel("Brick Rows:")
         self.brickcol_label = QtWidgets.QLabel("Brick Col:")
+        self.roof_height_label = QtWidgets.QLabel("Roof Height:")
+        self.roof_radius_label = QtWidgets.QLabel("Roof Radius:")
         # Editable values
         self.height_edit = QtWidgets.QLineEdit("6")
         self.radius_edit = QtWidgets.QLineEdit("2")
         self.brickrow_edit = QtWidgets.QLineEdit("20")
         self.brickcol_edit = QtWidgets.QLineEdit("10")
+        self.roof_height_edit = QtWidgets.QLineEdit("3")
+        self.roof_radius_edit = QtWidgets.QLineEdit("12")
         # Create Button
         self.create_btn = QtWidgets.QPushButton("Create!")
 
     def _set_input_guidelines(self):
         """Ensure only compatible values are able to be entered"""
         # Input Masks
-        self.height_edit.setInputMask("9")
-        self.radius_edit.setInputMask("9")
+        self.height_edit.setInputMask("99")
+        self.radius_edit.setInputMask("99")
         self.brickrow_edit.setInputMask("99")
         self.brickcol_edit.setInputMask("99")
+        self.roof_height_edit.setInputMask("99")
+        self.roof_radius_edit.setInputMask("99")
 
     def _handle_input(self):
         """Control input for the lineEdit variables"""
@@ -72,7 +80,8 @@ class WizardWin(QtWidgets.QDialog):
         self.radius_input = float(self.radius_edit.text())
         self.brickrow_input = int(self.brickrow_edit.text())
         self.brickcol_input = int(self.brickcol_edit.text())
-        # Call these later in the create button function
+        self.roof_height_input = float(self.roof_height_edit.text())
+        self.roof_radius_input = float(self.roof_height_edit.text())
 
     def _layout_ui(self):
         """Layout UI elements and widgets"""
@@ -85,12 +94,16 @@ class WizardWin(QtWidgets.QDialog):
         self.main_layout.addWidget(self.radius_label)
         self.main_layout.addWidget(self.brickrow_label)
         self.main_layout.addWidget(self.brickcol_label)
+        self.main_layout.addWidget(self.roof_height_label)
+        self.main_layout.addWidget(self.roof_radius_label)
         self._handle_input()
         # Editable Values
         self.main_layout.addWidget(self.height_edit)
         self.main_layout.addWidget(self.radius_edit)
         self.main_layout.addWidget(self.brickrow_edit)
         self.main_layout.addWidget(self.brickcol_edit)
+        self.main_layout.addWidget(self.roof_height_edit)
+        self.main_layout.addWidget(self.roof_radius_edit)
         # Create Button
         self.main_layout.addWidget(self.create_btn)
         # Layout application
@@ -169,10 +182,7 @@ class WizardWin(QtWidgets.QDialog):
                                 radius=self.radius_input,
                                 brickrows=self.brickrow_input,
                                 brickcol=self.brickcol_input, roofcolor=[
-                                    self.r, self.g, self.b])
+                                self.r, self.g, self.b],
+                                roofheight=self.roof_height_input,
+                                roofradius=self.roof_radius_input)
         new_tower.create()
-        print("Create Pressed")
-        print(f"{self.height_input}")
-        print(f"{self.radius_input}")
-        print(f"{self.brickrow_input}")
-        print(f"{self.brickcol_input}")
