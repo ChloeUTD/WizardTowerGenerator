@@ -11,7 +11,10 @@ def get_maya_main_win():
 
 
 class WizardWin(QtWidgets.QDialog):
-    # TODO: Make it to where pressing the create button creates a Wizard Tower
+    # TODO: Color input works but height doesn't actually change based on input
+    # fix that and see if that applies to the other numbers too.
+    # TODO: Create a shelf icon that launches this window.
+    # TODO: Figure out what breaks this thing and fix that
 
     def __init__(self):
         """Construction"""
@@ -27,10 +30,10 @@ class WizardWin(QtWidgets.QDialog):
 
     def _connect_signals(self):
         """Link buttons to functions"""
-        self.height_edit.editingFinished.connect(self._set_input_guidelines)
-        self.radius_edit.editingFinished.connect(self._set_input_guidelines)
-        self.brickrow_edit.editingFinished.connect(self._set_input_guidelines)
-        self.brickcol_edit.editingFinished.connect(self._set_input_guidelines)
+        self.height_edit.editingFinished.connect(self._handle_input)
+        self.radius_edit.editingFinished.connect(self._handle_input)
+        self.brickrow_edit.editingFinished.connect(self._handle_input)
+        self.brickcol_edit.editingFinished.connect(self._handle_input)
         # Link create button to create tower function
         self.create_btn.clicked.connect(self._create_tower)
 
@@ -169,3 +172,7 @@ class WizardWin(QtWidgets.QDialog):
                                     self.r, self.g, self.b])
         new_tower.create()
         print("Create Pressed")
+        print(f"{self.height_input}")
+        print(f"{self.radius_input}")
+        print(f"{self.brickrow_input}")
+        print(f"{self.brickcol_input}")
