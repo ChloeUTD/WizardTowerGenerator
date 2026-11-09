@@ -4,24 +4,27 @@ import random
 
 # Make wizard tower class with 5 parameters.
 # Add a warning saying you can't make subdivison axis/ brick rows lower than 3
+# brickrows and brickcol are backwards
 
 
 class WizardTower():
 
     # Current order:
     # 1. Create base, 2. Apply materials, 3. clean up and merge
-    def __init__(self, height=6, radius=1, brickrows=3,
-                 brickcol=1, roofcolor=[0, 0, 0]):
+    def __init__(self, height=6, radius=1, brickrows=20,
+                 brickcol=10, roofcolor=[0, 0, 0], roofheight=3,
+                 roofradius=2):
         # Mesh parameter variables
         self.cylinder_height = height
         self.cylinder_radius = radius
+        # Make sure rows and collumns are valid. If not, reset to defaul
         self.brick_rows = brickrows
         self.brick_col = brickcol
         # Color parameter variable
         self.roof_color = roofcolor
         # Non parameter variables
-        self.roof_height = self.cylinder_height / 2
-        self.roof_radius = self.cylinder_radius * 2
+        self.roof_height = roofheight
+        self.roof_radius = roofradius
         # Color non parameter variable
         self.wall_color = [0.463, 0.49, 0.522]
 
@@ -29,8 +32,8 @@ class WizardTower():
         """This will run the other functions required to make the tower"""
         self.create_base()
         # Put roof color and wall color here
-        # self.create_roof_mat()
-        # self.create_tower_mat()
+        self.create_roof_mat()
+        self.create_tower_mat()
         self.create_bricks()  # Put create bricks here
         self.clean_and_merge()
 
@@ -69,7 +72,7 @@ class WizardTower():
         # Run edit names to see if WizardTower is taken. If not, add
         # a variable that you get from what edit_names returns
         cmds.polyUnite("TowerBase", "TowerRoof", n="WizardTower")
-        # Delete empty group Towerbase and TowerRoof
+        cmds.delete("TowerBase", "TowerRoof")
 
     def edit_names(self):
         """This will run if an instance of WizardTower already exists so the
@@ -114,8 +117,8 @@ class WizardTower():
         # Mess with collumn numbers and make extrude thickness a little
         # random
         # Divide mesh.
-        cmds.setAttr("polyCylinder1.subdivisionsAxis", self.brick_rows)
-        cmds.setAttr("polyCylinder1.subdivisionsHeight", self.brick_col)
+        cmds.setAttr("polyCylinder1.subdivisionsAxis", self.brick_col)
+        cmds.setAttr("polyCylinder1.subdivisionsHeight", self.brick_rows)
         cmds.setAttr("polyCylinder1.subdivisionsCaps", 0)
         # Count bricks
         count = 0
